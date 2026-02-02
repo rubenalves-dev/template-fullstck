@@ -1,13 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
-import { NotificationService } from '../../core/services/notification.service';
-import { ButtonComponent } from '../../ui/button/button';
-import { InputComponent } from '../../ui/input/input';
+import { AuthService } from '../../../shared/data-access/auth/auth.service';
+import { NotificationService } from '../../../shared/data-access/notification/notification.service';
+import { ButtonComponent } from '../../../shared/ui/button/button';
+import { InputComponent } from '../../../shared/ui/form/input';
 
 @Component({
-  selector: 'app-login',
+  selector: 'raiiaa-login',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, InputComponent, ButtonComponent],
   template: `
@@ -17,38 +17,38 @@ import { InputComponent } from '../../ui/input/input';
           <h1>Welcome Back</h1>
           <p>Please enter your details to sign in.</p>
         </div>
-        
+
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <app-input
+          <raiiaa-input
             id="email"
             label="Email"
             type="email"
             placeholder="Enter your email"
             [control]="emailControl"
           />
-          
-          <app-input
+
+          <raiiaa-input
             id="password"
             label="Password"
             type="password"
             placeholder="Enter your password"
             [control]="passwordControl"
           />
-          
-          <app-button
+
+          <raiiaa-button
             label="Sign In"
             type="submit"
             [disabled]="loginForm.invalid || isLoading()"
           />
         </form>
-        
+
         <div class="auth-footer">
           <p>Don't have an account? <a routerLink="/register">Sign up</a></p>
         </div>
       </div>
     </div>
   `,
-  styleUrls: ['../auth.scss', './login.scss'],
+  styleUrls: ['../../auth.scss', './login.scss'],
 })
 export class LoginComponent {
   private readonly authService = inject(AuthService);
@@ -58,8 +58,14 @@ export class LoginComponent {
   isLoading = signal(false);
 
   loginForm = new FormGroup({
-    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
-    password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6)] }),
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(6)],
+    }),
   });
 
   get emailControl(): FormControl {
@@ -89,7 +95,7 @@ export class LoginComponent {
         console.error('Login error', err);
         this.notificationService.show('error', 'Invalid email or password.');
         this.isLoading.set(false);
-      }
+      },
     });
   }
 }

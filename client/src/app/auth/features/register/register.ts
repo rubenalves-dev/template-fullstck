@@ -1,13 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
-import { NotificationService } from '../../core/services/notification.service';
-import { ButtonComponent } from '../../ui/button/button';
-import { InputComponent } from '../../ui/input/input';
+import { AuthService } from '../../../shared/data-access/auth/auth.service';
+import { NotificationService } from '../../../shared/data-access/notification/notification.service';
+import { ButtonComponent } from '../../../shared/ui/button/button';
+import { InputComponent } from '../../../shared/ui/form/input';
 
 @Component({
-  selector: 'app-register',
+  selector: 'raiiaa-register',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, InputComponent, ButtonComponent],
   template: `
@@ -17,9 +17,9 @@ import { InputComponent } from '../../ui/input/input';
           <h1>Create Account</h1>
           <p>Sign up to get started.</p>
         </div>
-        
+
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-          <app-input
+          <raiiaa-input
             id="fullName"
             label="Full Name"
             type="text"
@@ -27,7 +27,7 @@ import { InputComponent } from '../../ui/input/input';
             [control]="fullNameControl"
           />
 
-          <app-input
+          <raiiaa-input
             id="organizationName"
             label="Organization Name"
             type="text"
@@ -35,36 +35,36 @@ import { InputComponent } from '../../ui/input/input';
             [control]="organizationNameControl"
           />
 
-          <app-input
+          <raiiaa-input
             id="email"
             label="Email"
             type="email"
             placeholder="Enter your email"
             [control]="emailControl"
           />
-          
-          <app-input
+
+          <raiiaa-input
             id="password"
             label="Password"
             type="password"
             placeholder="Create a password"
             [control]="passwordControl"
           />
-          
-          <app-button
+
+          <raiiaa-button
             label="Sign Up"
             type="submit"
             [disabled]="registerForm.invalid || isLoading()"
           />
         </form>
-        
+
         <div class="auth-footer">
           <p>Already have an account? <a routerLink="/login">Sign in</a></p>
         </div>
       </div>
     </div>
   `,
-  styleUrls: ['../auth.scss', './register.scss'],
+  styleUrls: ['../../auth.scss', './register.scss'],
 })
 export class RegisterComponent {
   private readonly authService = inject(AuthService);
@@ -75,9 +75,18 @@ export class RegisterComponent {
 
   registerForm = new FormGroup({
     full_name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    organization_name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
-    password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6)] }),
+    organization_name: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(6)],
+    }),
   });
 
   get fullNameControl(): FormControl {
@@ -114,7 +123,7 @@ export class RegisterComponent {
         console.error('Registration error', err);
         this.notificationService.show('error', 'Registration failed. Please try again.');
         this.isLoading.set(false);
-      }
+      },
     });
   }
 }

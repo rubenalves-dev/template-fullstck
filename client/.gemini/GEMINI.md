@@ -49,3 +49,20 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 ## API
 
 - To see how to communicate with the API, see the [API Documentation](./api/API.md)
+
+## Standalone Components
+
+- Use standalone components for dumb components that do not depend on any services or other components.
+- Use NgModules for complex components that depend on multiple services or other components. (e.g., grid components, chart components, etc.)
+- Use NgModules for feature modules that group related components, directives, and pipes together.
+
+## Project Structure
+
+- Each folder inside the `app` folder should represent a feature module.
+- Each feature module should have its own folder inside the `app` folder.
+- Each feature module folder should contain all related components, services, and other files separeted in the following subfolders:
+  - `data-access`: Services that communicate with the API or other external data sources.
+  - `features`: Smart components that manage state and coordinate between dumb components and services.
+  - `ui`: Dumb components that are reusable and do not depend on any services or other components.
+  - `utils`: Utility functions and types used across the feature module.
+- Inside the `app` folder, there should be a `shared` folder for shared resources used across multiple feature modules.

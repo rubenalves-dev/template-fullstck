@@ -2,7 +2,7 @@ import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-input',
+  selector: 'raiiaa-input',
   standalone: true,
   imports: [ReactiveFormsModule],
   template: `
@@ -30,34 +30,36 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
       }
     </div>
   `,
-  styles: [`
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 1rem;
-    }
-    label {
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: #333;
-    }
-    .input-field {
-      padding: 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 1rem;
-      transition: border-color 0.2s;
-    }
-    .input-field:focus {
-      border-color: #007bff;
-      outline: none;
-    }
-    .error-message {
-      color: #dc3545;
-      font-size: 0.875rem;
-      margin-top: 0.25rem;
-    }
-  `]
+  styles: [
+    `
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1rem;
+      }
+      label {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #333;
+      }
+      .input-field {
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+      }
+      .input-field:focus {
+        border-color: #007bff;
+        outline: none;
+      }
+      .error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+    `,
+  ],
 })
 export class InputComponent {
   label = input.required<string>();

@@ -11,6 +11,11 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "experimentalDecorators": true,
+    "paths": {
+      "shared": [
+        "./projects/shared/src/public-api.ts"
+      ]
+    },
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve"
@@ -25,10 +30,22 @@
   "files": [],
   "references": [
     {
-      "path": "./tsconfig.app.json"
+      "path": "./projects/shared/tsconfig.lib.json"
     },
     {
-      "path": "./tsconfig.spec.json"
+      "path": "./projects/shared/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/frontoffice/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/frontoffice/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/backoffice/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/backoffice/tsconfig.spec.json"
     }
   ]
 }

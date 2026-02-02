@@ -6,7 +6,10 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "start:frontoffice": "ng serve frontoffice --port 4200",
+    "start:backoffice": "ng serve backoffice --port 4201",
+    "start:all": "ng serve frontoffice --port 4200 & ng serve backoffice --port 4201"
   },
   "prettier": {
     "printWidth": 100,
@@ -43,6 +46,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "ng-packagr": "^20.3.0",
     "typescript": "~5.9.2"
   }
 }

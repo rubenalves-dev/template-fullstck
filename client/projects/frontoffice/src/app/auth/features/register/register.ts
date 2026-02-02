@@ -1,10 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../shared/data-access/auth/auth.service';
-import { NotificationService } from '../../../shared/data-access/notification/notification.service';
-import { ButtonComponent } from '../../../shared/ui/button/button';
-import { InputComponent } from '../../../shared/ui/form/input';
+import { AuthService } from 'shared';
+import { NotificationService } from 'shared';
+import { ButtonComponent } from 'shared';
+import { InputComponent } from 'shared';
 
 @Component({
   selector: 'raiiaa-register',
@@ -59,7 +59,7 @@ import { InputComponent } from '../../../shared/ui/form/input';
         </form>
 
         <div class="auth-footer">
-          <p>Already have an account? <a routerLink="/login">Sign in</a></p>
+          <p>Already have an account? <a routerLink="/auth/login">Sign in</a></p>
         </div>
       </div>
     </div>
@@ -117,7 +117,7 @@ export class RegisterComponent {
         console.log('Registration success:', response.data.message);
         this.notificationService.show('success', 'Registration successful! Please sign in.');
         this.isLoading.set(false);
-        this.router.navigate(['/login']);
+        this.router.navigate(['/auth/login']);
       },
       error: (err) => {
         console.error('Registration error', err);

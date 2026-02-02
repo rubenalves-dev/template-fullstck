@@ -1,10 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../shared/data-access/auth/auth.service';
-import { NotificationService } from '../../../shared/data-access/notification/notification.service';
-import { ButtonComponent } from '../../../shared/ui/button/button';
-import { InputComponent } from '../../../shared/ui/form/input';
+import { AuthService, ButtonComponent, InputComponent, NotificationService } from 'shared';
 
 @Component({
   selector: 'raiiaa-login',
@@ -43,7 +40,7 @@ import { InputComponent } from '../../../shared/ui/form/input';
         </form>
 
         <div class="auth-footer">
-          <p>Don't have an account? <a routerLink="/register">Sign up</a></p>
+          <p>Don't have an account? <a routerLink="/auth/register">Sign up</a></p>
         </div>
       </div>
     </div>

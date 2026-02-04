@@ -16,5 +16,14 @@ services:
       timeout: 5s
       retries: 5
 
+  nats:
+    image: nats:latest
+    container_name: template-fullstack_nats
+    ports:
+      - "4222:4222" # Client Port
+      - "8222:8222" # HTTP Management/Monitoring Port
+    # Optional: Enable JetStream for message persistence
+    command: [ "-js" ]
+
 volumes:
   postgres_data:

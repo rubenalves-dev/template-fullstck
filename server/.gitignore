@@ -22,4 +22,7 @@ go.work
 
 # Binary output
 bin/
-tmp/
+temp/
+
+# Backup files
+_bk/

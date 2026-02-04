@@ -2,26 +2,13 @@
   "info": {
     "_postman_id": "template-fullstack-api-collection",
     "name": "Template Fullstack API",
-    "description": "Collection to test the Template Fullstack Sports SaaS API",
+    "description": "Collection for Auth and CMS APIs",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Public",
+      "name": "Auth",
       "item": [
-        {
-          "name": "Health Check",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/health",
-              "host": ["{{baseUrl}}"],
-              "path": ["health"]
-            }
-          },
-          "response": []
-        },
         {
           "name": "Login",
           "event": [
@@ -30,8 +17,8 @@
               "script": {
                 "exec": [
                   "var jsonData = pm.response.json();",
-                  "if (jsonData.data && jsonData.data.token) {",
-                  "    pm.environment.set(\"token\", jsonData.data.token);",
+                  "if (jsonData.token) {",
+                  "    pm.environment.set(\"token\", jsonData.token);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -48,12 +35,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"admin@template-fullstack.com\",\n    \"password\": \"password123\"\n}"
+              "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/login",
+              "raw": "{{baseUrl}}/auth/login",
               "host": ["{{baseUrl}}"],
-              "path": ["login"]
+              "path": ["auth", "login"]
             }
           },
           "response": []
@@ -70,17 +57,127 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"admin@template-fullstack.com\",\n    \"password\": \"password123\",\n    \"full_name\": \"Admin User\",\n    \"organization_name\": \"My Sports Club\"\n}"
+              "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\",\n    \"full_name\": \"New User\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/register",
+              "raw": "{{baseUrl}}/auth/register",
               "host": ["{{baseUrl}}"],
-              "path": ["register"]
+              "path": ["auth", "register"]
             }
           },
           "response": []
         }
       ]
+    },
+    {
+      "name": "CMS",
+      "item": [
+        {
+          "name": "Create Draft Page",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Home Page\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pages",
+              "host": ["{{baseUrl}}"],
+              "path": ["pages"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Page by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pages/home-page",
+              "host": ["{{baseUrl}}"],
+              "path": ["pages", "home-page"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Page Metadata",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Home Page Updated\",\n    \"seo_description\": \"Description...\",\n    \"keywords\": [\"home\", \"cms\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pages/{{pageId}}/metadata",
+              "host": ["{{baseUrl}}"],
+              "path": ["pages", "{{pageId}}", "metadata"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Page Layout",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n    {\n        \"sort_order\": 0,\n        \"css_class\": \"container\",\n        \"columns\": [\n            {\n                \"width_md\": \"12\",\n                \"blocks\": [\n                    {\n                        \"type\": \"hero\",\n                        \"content\": {\n                            \"title\": \"Welcome\"\n                        }\n                    }\n                ]\n            }\n        ]\n    }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pages/{{pageId}}/layout",
+              "host": ["{{baseUrl}}"],
+              "path": ["pages", "{{pageId}}", "layout"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publish Page",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pages/{{pageId}}/publish",
+              "host": ["{{baseUrl}}"],
+              "path": ["pages", "{{pageId}}", "publish"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      },
+      "response": []
     }
   ],
   "auth": {
@@ -93,22 +190,6 @@
       }
     ]
   },
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "exec": [""]
-      }
-    },
-    {
-      "listen": "test",
-      "script": {
-        "type": "text/javascript",
-        "exec": [""]
-      }
-    }
-  ],
   "variable": [
     {
       "key": "baseUrl",
@@ -118,6 +199,11 @@
     {
       "key": "token",
       "value": "",
+      "type": "string"
+    },
+    {
+      "key": "pageId",
+      "value": "PAGE_UUID_HERE",
       "type": "string"
     }
   ]

@@ -26,13 +26,12 @@ This document serves as the **Single Source of Truth** for:
 - **Reasoning:** Ensures high decoupling, allows for easy mocking in tests, and enables swapping implementations (e.g., SQL repository for a Mock or API client) without touching business logic.
 
 ### 2.2 Folder Structure & Layering
-- **Domain:** Located in `internal/domain/<module>`. Contains entities and repository interfaces.
-- **Application:** Located in `internal/applications/<module>`. Contains Use Cases/Services.
-    - **DTOs:** MUST be placed in a `dtos/` subfolder within the application module (e.g., `internal/applications/iam/dtos/`).
-- **Infrastructure:**
-    - **Persistence:** Concrete implementations wrap generated code (e.g., SQLC) in `internal/infrastructure/persistence/<db_tech>/repositories`.
-- **HTTP Ports:** Located in `internal/ports/http`.
-    - **Middleware:** `internal/ports/http/middleware`.
-    - **Endpoints:** `internal/ports/http/endpoints/<module>/`.
-    - **Grouping:** Endpoints should be split by responsibility (e.g., `user.go`, `organization.go`).
+- **Module Root:** `internal/<module>/` (e.g., `internal/auth/`, `internal/cms/`).
+- **Domain:** `internal/<module>/domain/`. Contains entities, DTOs, and repository/service interfaces.
+- **Service:** `internal/<module>/service/` or `services/`. Contains business logic and event publishing.
+- **Repositories:** `internal/<module>/repositories/`. Contains concrete persistence implementations using `pgx`.
+- **Delivery:**
+    - **HTTP Handlers:** `internal/<module>/delivery/http/`.
+    - **Event Listeners:** `internal/<module>/delivery/events/`.
+- **Platform:** `internal/platform/`. Shared infrastructure (DB, NATS, Router, Config).
 

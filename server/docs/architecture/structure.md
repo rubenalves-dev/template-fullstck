@@ -2,7 +2,7 @@
 
 ## 1. Architectural Philosophy
 
-The project is organized by **DDD** (Domain-Driven Design). We prioritize **interfaces as types** to ensure decoupling.
+The project follows an **Event-Driven Architecture (EDA)**. Microservices themselves use a **simplified version of Domain-Driven Design (DDD)** to maintain clear boundaries while reducing boilerplate. We prioritize **interfaces as types** to ensure decoupling and use **NATS** for inter-service communication.
 
 ## 2. Standard Folder Structure
 
@@ -14,24 +14,21 @@ We adhere to the [Standard Go Project Layout](https://github.com/golang-standard
 │   └── api/
 │       └── main.go            # Entry Point: Dependency injection & server startup
 ├── internal/
-│   ├── applications/          # Use Cases: Orchestrates domain logic and ties domains together
-│   ├── config/                # Configuration loading (env vars)
-│   ├── domain/                # Pure Domain Logic & Interfaces
-│   │   ├── common/            # Shared value objects/types
-│   │   └── iam/               # Identity & Access Management Bounded Context
-│   │       ├── organization/
-│   │       ├── organizationuser/
-│   │       └── user/
-│   ├── infrastructure/        # Infrastructure Implementation
-│   │   └── persistence/
-│   │       └── postgres/
-│   │           ├── migrations/ # Goose migration files (.sql)
-│   │           ├── queries/    # SQLC queries (.sql)
-│   │           └── sqlc/       # Generated Go code from SQLC
-│   ├── ports/                 # Driving Adapters (Entry Points)
-│   │   └── http/              # Handlers, Router, Middleware
-│   └── utils/                 # Utility functions
-├── sqlc.yaml                  # SQLC configuration
+│   ├── auth/                  # Authentication & Identity Module
+│   │   ├── delivery/          # HTTP Handlers & Events
+│   │   ├── domain/            # Domain Entities & Interfaces
+│   │   ├── repositories/      # Persistence implementation
+│   │   └── service/           # Business Logic
+│   ├── cms/                   # Content Management System Module
+│   │   ├── delivery/          # HTTP Handlers & Events
+│   │   ├── domain/            # Domain Entities, DTOs & Interfaces
+│   │   ├── repositories/      # Persistence implementation
+│   │   └── services/          # Business Logic
+│   ├── platform/              # Infrastructure (DB, NATS, Config)
+│   └── platform/              # Shared infrastructure (DB, NATS, Router)
+├── migrations/                # Database migrations (Goose)
+├── pkg/                       # Shared libraries (jsonutil, httputil)
+├── scripts/                   # Utility scripts
 ├── Makefile                   # Build & Dev commands
 └── go.mod                     # Go module definition
 ```
@@ -39,8 +36,13 @@ We adhere to the [Standard Go Project Layout](https://github.com/golang-standard
 ### Key Rules
 
 1.  **Entry Point:** The application entry point MUST be `cmd/api/main.go`.
-2.  **Concept Isolation:** Each domain concept has its own folder under `internal/domain`.
-3.  **Application Layer:** Use cases reside in `internal/applications`. They are responsible for orchestrating domain services, managing transactions, and converting between DTOs and entities if necessary.
-4.  **Persistence Layer:** All database-related code resides in `internal/infrastructure/persistence`.
-5.  **Interface-First:** Handlers depend on Application Interfaces; Applications depend on Domain Service Interfaces; Domain Services depend on Repository Interfaces.
-6.  **Separation of Concerns:** `ports/http` handles the web layer, `applications` handles use case orchestration, `domain` handles business logic, and `infrastructure` handles data access.
+2.  **Module Isolation:** Each business module (auth, cms) is self-contained under `internal/`.
+3.  **Layered Architecture:** Each module follows a simplified layered structure:
+    - **Domain:** Entities, DTOs, and repository/service interfaces.
+    - **Service:** Business logic implementation and event publishing.
+    - **Repositories:** Data access implementation.
+    - **Delivery:** External interfaces (HTTP handlers and NATS event listeners).
+4.  **Event-Driven Communication:** Modules communicate asynchronously using NATS. Services publish events (e.g., `cms.page.published`) that other modules can subscribe to.
+5.  **Platform Layer:** Cross-cutting concerns like database connections, NATS, and configuration reside in `internal/platform`.
+6.  **Interface-First:** High-level components depend on interfaces defined in the Domain layer, not on concrete implementations.
+7.  **Separation of Concerns:** HTTP handlers manage request/response, services manage logic, and repositories manage data.

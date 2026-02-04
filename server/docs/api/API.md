@@ -34,7 +34,7 @@ Check if the service is up.
 
 Authenticate and receive a JWT token.
 
-- **URL:** `/login`
+- **URL:** `/auth/login`
 - **Method:** `POST`
 - **Body:**
   ```json
@@ -46,32 +46,106 @@ Authenticate and receive a JWT token.
 - **Response:** `200 OK`
   ```json
   {
-    "data": {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5..."
-    }
+    "token": "eyJhbGciOiJIUzI1NiIsInR5..."
   }
   ```
 
 ### Register
 
-Create a new organization and an admin user.
+Create a new user.
 
-- **URL:** `/register`
+- **URL:** `/auth/register`
 - **Method:** `POST`
 - **Body:**
   ```json
   {
-    "email": "admin@example.com",
+    "email": "user@example.com",
     "password": "yourpassword",
-    "full_name": "Admin User",
-    "organization_name": "My Sports Club"
+    "full_name": "New User"
   }
   ```
 - **Response:** `201 Created`
   ```json
   {
-    "data": {
-      "message": "User registered successfully"
-    }
+    "message": "User registered successfully"
   }
   ```
+
+---
+
+## CMS Endpoints (Protected)
+
+All endpoints below require a valid JWT token.
+
+### Create Draft Page
+
+- **URL:** `/pages`
+- **Method:** `POST`
+- **Body:**
+  ```json
+  {
+    "title": "My New Page"
+  }
+  ```
+- **Response:** `201 Created`
+
+### Get Page by Slug
+
+- **URL:** `/pages/{slug}`
+- **Method:** `GET`
+- **Response:** `200 OK` (includes full layout)
+
+### Update Page Metadata
+
+- **URL:** `/pages/{id}/metadata`
+- **Method:** `PUT`
+- **Body:**
+  ```json
+  {
+    "title": "Updated Title",
+    "slug": "updated-slug",
+    "seo_description": "New description",
+    "keywords": ["cms", "dynamic"]
+  }
+  ```
+- **Response:** `200 OK`
+
+### Update Page Layout
+
+Update the entire hierarchical structure of rows, columns, and blocks.
+
+- **URL:** `/pages/{id}/layout`
+- **Method:** `PUT`
+- **Body:**
+  ```json
+  [
+    {
+      "sort_order": 0,
+      "css_class": "container",
+      "columns": [
+        {
+          "width_md": "6",
+          "blocks": [
+            {
+              "type": "text",
+              "content": { "html": "<p>Hello World</p>" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  ```
+- **Response:** `200 OK`
+
+### Publish Page
+
+- **URL:** `/pages/{id}/publish`
+- **Method:** `POST`
+- **Response:** `200 OK`
+
+### Archive Page
+
+- **URL:** `/pages/{id}/archive`
+- **Method:** `POST`
+- **Response:** `200 OK`

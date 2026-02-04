@@ -1,23 +1,6 @@
 # 🗄️ DATABASE.md
 
-## 1. SaaS Multi-Tenancy Strategy
-
-To support multiple organizations/tenants on a single instance:
-
-- **Organization Isolation:** Every core table contains an `organization_id`.
-- **Global Filters:** All `sqlc` queries must include `WHERE organization_id = $1` to prevent data leakage between different organizations.
-
----
-
-## 2. Core Entities & Schema
-
-### Organizations (The SaaS Root)
-
-| Column | Type        | Description                         |
-| ------ | ----------- | ----------------------------------- |
-| `id`   | `UUID (PK)` | Unique ID for the Organization.     |
-| `name` | `VARCHAR`   | Official name of the entity.        |
-| `slug` | `VARCHAR`   | URL-friendly identifier.            |
+## 1. Core Entities & Schema
 
 ### Users (Administrative Staff)
 
@@ -25,47 +8,65 @@ To support multiple organizations/tenants on a single instance:
 | ------ | ----------- | ----------------------------------- |
 | `id`   | `UUID (PK)` | Unique ID for the User.             |
 | `email`| `VARCHAR`   | User email (Unique).                |
-| `name` | `VARCHAR`   | User full name.                     |
+| `full_name` | `VARCHAR`   | User full name.                     |
+| `password_hash` | `VARCHAR` | Hashed password.                  |
 
-### Organization Users (Junction / Membership)
+### Pages (CMS Content)
 
-| Column | Type        | Description                                      |
-| ------ | ----------- | ------------------------------------------------ |
-| `id`   | `UUID (PK)` | Unique ID for the membership.                    |
-| `organization_id`| `UUID (FK)` | Reference to the Organization. |
-| `user_id`| `UUID (FK)` | Reference to the User.                         |
-| `role` | `VARCHAR`   | Role within the organization (e.g., ADMIN, MEMBER).|
+| Column | Type | Description |
+| ------ | ---- | ----------- |
+| `id` | `UUID (PK)` | Unique ID for the Page. |
+| `title` | `VARCHAR` | Page title. |
+| `slug` | `VARCHAR` | URL-friendly identifier. |
+| `seo_description`| `TEXT` | SEO description metadata. |
+| `seo_keywords` | `TEXT[]` | SEO keywords metadata. |
+| `status` | `VARCHAR` | Page status (`draft`, `published`, `archived`). |
+
+### Rows, Columns & Blocks (CMS Layout)
+
+- **Rows**: Vertical sections within a page. Supports `css_class` and `background_config` (JSONB).
+- **Columns**: Horizontal divisions within a row. Supports responsive widths (`width_sm`, `width_md`, etc.) and `css_class`.
+- **Blocks**: Content elements within a column. Supports `type` and `content` (JSONB).
 
 ### ER Diagram
 
 ```mermaid
 erDiagram
-    Organization ||--o{ OrganizationUser : "has"
-    User ||--o{ OrganizationUser : "belongs to"
-
-    Organization {
-        uuid id PK
-        string name
-        string slug
-        datetime created_at
-        datetime updated_at
-    }
+    User ||--o{ Page : "manages"
+    Page ||--o{ Row : "contains"
+    Row ||--o{ Column : "contains"
+    Column ||--o{ Block : "contains"
 
     User {
         uuid id PK
         string email
-        string name
+        string full_name
         string password_hash
-        datetime created_at
-        datetime updated_at
     }
 
-    OrganizationUser {
+    Page {
         uuid id PK
-        uuid organization_id FK
-        uuid user_id FK
-        string role
-        datetime created_at
-        datetime updated_at
+        string title
+        string slug
+        string status
+    }
+
+    Row {
+        uuid id PK
+        uuid page_id FK
+        int order_index
+    }
+
+    Column {
+        uuid id PK
+        uuid row_id FK
+        int order_index
+    }
+
+    Block {
+        uuid id PK
+        uuid column_id FK
+        string type
+        jsonb content
     }
 ```

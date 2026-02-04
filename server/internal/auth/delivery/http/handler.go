@@ -5,17 +5,16 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/rubenalves-dev/template-fullstack/server/internal/auth"
-	"github.com/rubenalves-dev/template-fullstack/server/internal/auth/delivery/http"
+	"github.com/rubenalves-dev/template-fullstack/server/internal/auth/domain"
 	"github.com/rubenalves-dev/template-fullstack/server/pkg/httputil"
 	"github.com/rubenalves-dev/template-fullstack/server/pkg/jsonutil"
 )
 
 type AuthHandler struct {
-	svc auth.Service
+	svc domain.Service
 }
 
-func RegisterHTTPHandlers(r *chi.Mux, svc auth.Service) {
+func RegisterHTTPHandlers(r *chi.Mux, svc domain.Service) {
 	h := &AuthHandler{svc: svc}
 
 	r.Route("/auth", func(r chi.Router) {
@@ -35,6 +34,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		status, code := httputil.MapError(err)
 		jsonutil.RenderError(w, status, code, err.Error())
+		return
 	}
 
 	jsonutil.RenderJSON(w, http.StatusOK, loginResponse{Token: token})
@@ -47,7 +47,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.svc.Register(r.Context(), auth.User{
+	err := h.svc.Register(r.Context(), domain.User{
 		Email:        req.Email,
 		PasswordHash: req.Password,
 		FullName:     req.FullName,

@@ -6,12 +6,13 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/rubenalves-dev/template-fullstack/server/internal/auth/delivery/events"
 	"github.com/rubenalves-dev/template-fullstack/server/internal/auth/delivery/http"
+	"github.com/rubenalves-dev/template-fullstack/server/internal/auth/domain"
 	"github.com/rubenalves-dev/template-fullstack/server/internal/auth/repositories"
 	"github.com/rubenalves-dev/template-fullstack/server/internal/auth/service"
 )
 
 type AuthModule struct {
-	Service Service
+	Service domain.Service
 }
 
 func NewModule(pool *pgxpool.Pool, nc *nats.Conn, jwtSecret string) *AuthModule {

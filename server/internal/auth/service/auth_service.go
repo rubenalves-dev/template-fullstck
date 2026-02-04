@@ -6,18 +6,20 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"github.com/nats-io/nats.go"
+	"github.com/rubenalves-dev/template-fullstack/server/internal/auth/domain"
 	"github.com/rubenalves-dev/template-fullstack/server/pkg/httputil"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type authService struct {
-	repo      auth.Repository
+	repo      domain.Repository
 	nc        *nats.Conn
 	jwtSecret string
 }
 
-func NewAuthService(repository auth.Repository, nc *nats.Conn, jwtSecret string) auth.Service {
+func NewAuthService(repository domain.Repository, nc *nats.Conn, jwtSecret string) domain.Service {
 	return &authService{
 		repo:      repository,
 		nc:        nc,
@@ -38,7 +40,7 @@ func (a authService) Login(ctx context.Context, email, password string) (string,
 		return "", httputil.ErrUnauthorized
 	}
 
-	claims := auth.UserClaims{
+	claims := domain.UserClaims{
 		UserID: u.ID.String(),
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now()),
@@ -51,7 +53,10 @@ func (a authService) Login(ctx context.Context, email, password string) (string,
 	return token.SignedString([]byte(a.jwtSecret))
 }
 
-func (a authService) Register(ctx context.Context, user auth.User) error {
+func (a authService) Register(ctx context.Context, user domain.User) error {
+	if user.ID == uuid.Nil {
+		user.ID = uuid.New()
+	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), bcrypt.DefaultCost)
 	if err != nil {
 		return err

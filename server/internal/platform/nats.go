@@ -17,7 +17,7 @@ func NewNatsConnection(url string) (*nats.Conn, error) {
 			log.Printf("Disconnected from NATS: %v", err)
 		}),
 		nats.ReconnectHandler(func(nc *nats.Conn) {
-			log.Println("Reconnected to NATS on %v", nc.ConnectedUrl())
+			log.Printf("Reconnected to NATS on %v", nc.ConnectedUrl())
 		}),
 	}
 

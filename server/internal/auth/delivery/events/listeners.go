@@ -5,14 +5,14 @@ import (
 	"log"
 
 	"github.com/nats-io/nats.go"
-	"github.com/rubenalves-dev/template-fullstack/server/internal/auth"
+	"github.com/rubenalves-dev/template-fullstack/server/internal/auth/domain"
 )
 
 type eventHandler struct {
-	svc auth.Service
+	svc domain.Service
 }
 
-func RegisterListeners(nc *nats.Conn, svc auth.Service) {
+func RegisterListeners(nc *nats.Conn, svc domain.Service) {
 	h := &eventHandler{svc: svc}
 
 	// Example

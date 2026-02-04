@@ -6,7 +6,7 @@ import (
 )
 
 type ResponseEnvelope struct {
-	Data  interface{} `json:"data,omitempty"`
+	Data  interface{}  `json:"data,omitempty"`
 	Error *ErrorDetail `json:"error,omitempty"`
 }
 

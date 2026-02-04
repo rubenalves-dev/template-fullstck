@@ -5,12 +5,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/rubenalves-dev/template-fullstack/server/internal/config"
+	"github.com/rubenalves-dev/template-fullstack/server/internal/platform"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewRouter(t *testing.T) {
-	cfg := &config.Config{
+	cfg := &platform.Config{
 		JWTSecret: "test-secret",
 		Port:      8080,
 	}

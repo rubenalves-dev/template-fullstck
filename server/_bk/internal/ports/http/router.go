@@ -7,11 +7,11 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/cors"
 	"github.com/rubenalves-dev/template-fullstack/server/internal/applications/auth"
-	"github.com/rubenalves-dev/template-fullstack/server/internal/config"
+	"github.com/rubenalves-dev/template-fullstack/server/internal/platform"
 	"github.com/rubenalves-dev/template-fullstack/server/pkg/jsonutil"
 )
 
-func NewRouter(cfg *config.Config, authSvc auth.Service) http.Handler {
+func NewRouter(cfg *platform.Config, authSvc auth.Service) http.Handler {
 	r := chi.NewRouter()
 
 	// Standard Middleware

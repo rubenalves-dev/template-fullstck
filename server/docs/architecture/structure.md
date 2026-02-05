@@ -24,8 +24,7 @@ We adhere to the [Standard Go Project Layout](https://github.com/golang-standard
 │   │   ├── domain/            # Domain Entities, DTOs & Interfaces
 │   │   ├── repositories/      # Persistence implementation
 │   │   └── services/          # Business Logic
-│   ├── platform/              # Infrastructure (DB, NATS, Config)
-│   └── platform/              # Shared infrastructure (DB, NATS, Router)
+│   └── platform/              # Infrastructure (DB, NATS, Config)
 ├── migrations/                # Database migrations (Goose)
 ├── pkg/                       # Shared libraries (jsonutil, httputil)
 ├── scripts/                   # Utility scripts

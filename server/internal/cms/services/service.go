@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/nats-io/nats.go"
 	"github.com/rubenalves-dev/template-fullstack/server/internal/cms/domain"
+	"github.com/rubenalves-dev/template-fullstack/server/pkg/events"
 )
 
 type service struct {
@@ -31,7 +32,18 @@ func (s service) CreateDraft(ctx context.Context, title string) error {
 		Status: "draft",
 	}
 
-	return s.repo.Create(ctx, page)
+	err := s.repo.Create(ctx, page)
+	if err != nil {
+		return err
+	}
+
+	event := events.CmsPageDraftedData{
+		PageID: page.ID,
+		Title:  page.Title,
+		Slug:   page.Slug,
+	}
+	eventBytes, _ := json.Marshal(event)
+	return s.nc.Publish(events.CmsPageDrafted, eventBytes)
 }
 
 func (s service) PublishPage(ctx context.Context, id uuid.UUID) error {
@@ -45,18 +57,32 @@ func (s service) PublishPage(ctx context.Context, id uuid.UUID) error {
 		return err
 	}
 
-	event := domain.PagePublishedEvent{
+	event := events.CmsPagePublishedData{
 		PageID: page.ID,
 		Title:  page.Title,
 		Slug:   page.Slug,
 	}
 	eventBytes, _ := json.Marshal(event)
-
-	return s.nc.Publish(domain.EventPagePublished, eventBytes)
+	return s.nc.Publish(events.CmsPagePublished, eventBytes)
 }
 
 func (s service) ArchivePage(ctx context.Context, id uuid.UUID) error {
-	return s.repo.UpdateStatus(ctx, id, "archived")
+	page, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	err = s.repo.UpdateStatus(ctx, page.ID, "archived")
+	if err != nil {
+		return err
+	}
+
+	event := events.CmsPageArchivedData{
+		PageID: page.ID,
+		Title:  page.Title,
+		Slug:   page.Slug,
+	}
+	eventBytes, _ := json.Marshal(event)
+	return s.nc.Publish(events.CmsPageArchived, eventBytes)
 }
 
 func (s service) UpdatePageMetadata(ctx context.Context, id uuid.UUID, req domain.PageUpdateRequest) error {
@@ -126,7 +152,16 @@ func (s service) UpdatePageLayout(ctx context.Context, id uuid.UUID, layout []do
 		domainRows[i].Columns = domainCols
 	}
 
-	return s.repo.SaveLayout(ctx, id, domainRows)
+	err := s.repo.SaveLayout(ctx, id, domainRows)
+	if err != nil {
+		return err
+	}
+
+	event := events.CmsPageLayoutUpdatedData{
+		PageID: id,
+	}
+	eventBytes, _ := json.Marshal(event)
+	return s.nc.Publish(events.CmsPageLayoutUpdated, eventBytes)
 }
 
 func (s service) GetPageBySlug(ctx context.Context, Slug string) (*domain.Page, error) {

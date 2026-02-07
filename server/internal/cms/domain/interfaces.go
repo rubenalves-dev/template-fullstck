@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/rubenalves-dev/template-fullstack/server/pkg/httputil"
 )
 
 type Repository interface {
@@ -36,5 +35,3 @@ type Service interface {
 	// Public Facing
 	GetPageBySlug(ctx context.Context, Slug string) (*Page, error)
 }
-
-var ErrNotFound = httputil.ErrNotFound

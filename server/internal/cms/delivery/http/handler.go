@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/rubenalves-dev/template-fullstack/server/internal/cms/domain"
+	"github.com/rubenalves-dev/template-fullstack/server/pkg/httputil"
 	"github.com/rubenalves-dev/template-fullstack/server/pkg/jsonutil"
 )
 
@@ -52,7 +53,7 @@ func (h *CMSHandler) GetBySlug(w http.ResponseWriter, r *http.Request) {
 
 	page, err := h.svc.GetPageBySlug(r.Context(), slug)
 	if err != nil {
-		if errors.Is(err, domain.ErrNotFound) {
+		if errors.Is(err, httputil.ErrNotFound) {
 			jsonutil.RenderError(w, http.StatusNotFound, "NOT_FOUND", "Page not found")
 			return
 		}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -58,7 +59,13 @@ func (r *pgxRepo) UpsertPermissions(ctx context.Context, permissions []domain.Pe
 		)
 	}
 	br := r.pool.SendBatch(ctx, batch)
-	defer br.Close()
+	defer func(br pgx.BatchResults) {
+		err := br.Close()
+		if err != nil {
+			log.Printf("auth repo upsert permissions: %v", err)
+			return
+		}
+	}(br)
 	_, err := br.Exec()
 	if err != nil {
 		return fmt.Errorf("auth repo upsert permissions: %w", err)
@@ -168,7 +175,13 @@ func (r *pgxRepo) UpsertMenuDefinitions(ctx context.Context, defs []domain.MenuD
 	}
 
 	br := r.pool.SendBatch(ctx, batch)
-	defer br.Close()
+	defer func(br pgx.BatchResults) {
+		err := br.Close()
+		if err != nil {
+			log.Printf("auth repo upsert menu definitions: %v", err)
+			return
+		}
+	}(br)
 	_, err := br.Exec()
 	if err != nil {
 		return fmt.Errorf("auth repo upsert menu definitions: %w", err)

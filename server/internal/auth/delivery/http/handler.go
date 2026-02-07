@@ -23,6 +23,18 @@ func RegisterHTTPHandlers(r *chi.Mux, svc domain.Service) {
 	})
 }
 
+func RegisterProtectedHTTPHandlers(r chi.Router, svc domain.Service) {
+	h := &AuthHandler{svc: svc}
+
+	r.Route("/backoffice", func(r chi.Router) {
+		r.Get("/me/menu", h.GetMyMenu)
+		r.Get("/roles", h.GetRoles)
+		r.Post("/roles", h.CreateRole)
+		r.Post("/roles/{roleID}/permissions", h.AddPermissionToRole)
+		r.Post("/users/{userID}/roles", h.AssignRoleToUser)
+	})
+}
+
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var req loginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
